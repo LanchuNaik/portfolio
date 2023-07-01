@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Portfolio Website</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@1,900&family=Poppins:ital,wght@0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="header">
+    <div class="container">
+    <nav>
+        <div class="logo">
+          <span >Port</span><span  class="folio" style=" font-size: 50px;">folio<span>
+        </div>
+        <ul id="sidemenu">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#about">Skills</a></li>
+          <li><a href="#about">Project</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <i class="fa-solid fa-circle-xmark" onclick="closemenu()"></i>
+        </ul>
+        <i class="fa-solid fa-bars" onclick="openmenu()"></i>
+      </nav>
+
+      <div class="header-text">
+        <p>Full Stack Developer</p>
+        <h1>Hi,I'm <span>Lanchana</span></h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- -----------------------------------------------------About------------------------------------------------ -->
+  <div id="about">
+    <div class="container">
+      <div class="row">
+        <div class="about-col-1">
+        <img src="images/user1.jpg" alt="image">
+        </div>
+        <div class="about-col-2">
+          <h1 class="sub-title">About Me.</h1>
+          <p>
+            As a fresh full stack developer seeking an entry-level position where I can learn professional experience in programming and offer my skills in coding and program design.I am a quick learner, always seeking opportunities to enhance my skills and stay updated with emerging technologies.</p>
+
+          <div class="tab-title">
+            <p class="tab-link active-link" onclick="opentab('skills')">Skills</p>
+            <p class="tab-link" onclick="opentab('project')">Project</p>
+            <p class="tab-link" onclick="opentab('education')">Education</p>
+          </div>
+          <div class="tab-content active-tab" id="skills">
+            <ul>
+              <li><span>* </span>Java</li>
+              <li><span>* </span>HTML</li>
+              <li><span>* </span>Css</li>
+              <li><span>* </span>Javascript</li>
+              <li><span>* </span>Oracle DBMS</li>
+              <li><span>* </span>Manual Testing</li>
+            </ul>
+          </div>
+          <div class="tab-content" id="project">
+            <ul>
+              <li><span>TITLE :- </span>Rock-Paper-Scissors Game<br></li>
+              <li><span>Description :-</span><br>  
+                <ul>
+                  <li> <span>* </span>Developed dynamic and interactive game using html css & js.</li>
+                  <li><span>* </span>Implemented game functionality using JavaScript, allowing players to make their selections by clicking on icons representing rock, paper, or scissors.</li>
+                  <li><span>* </span>Utilized event handling in JavaScript to capture player input and trigger the game logic, determining the winner based on the chosen options.</li>
+                  <li><span>* </span>Designed a score system to keep track of wins, losses, and ties, storing the scores in the browser's local storage for persistent data.</li>
+                  <li><span>* </span>Incorporated a "Reset Score" button to allow users to reset the game score.</li>
+                  <li><span>* </span>Added an "Auto Play" feature that enables automated gameplay, simulating matches between the player and the computer opponent at regular intervals.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="tab-content" id="education">
+            <table>
+             <thead>
+              <th>YOP</th>
+              <th>INSTITUTE</th>
+              <th>COURSE</th>
+              <th>PERCENTAGE</th>
+             </thead>
+             <tr>
+              <td>2022</td>
+              <td>Anjuman College For Women</td>
+              <td>BSc</td>
+              <td>92%</td>
+             </tr>
+             <tr>
+              <td>2019</td>
+              <td>RNShetty PU College </td>
+              <td>PUC</td>
+              <td>92.16%</td>
+             </tr>
+             <tr>
+              <td>2017</td>
+              <td>RNS Vidyaniketan Murudeshwar</td>
+              <td>SSLC</td>
+              <td>90.56%</td>
+             </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- -----------------------------------------------------------contact--------------------------------------------------------- -->
+  <div id="contact">
+    <div class="container">
+      <div class="row">
+        <div class="contact-left">
+          <h1 class="sub-title">Contact Me</h1>
+          <p><i class="fa-solid fa-paper-plane"></i>lanchananaik@gmail.com</p>
+          <p><i class="fa-solid fa-phone"></i>8095512810</p>
+          <div class="social-icons">
+            <a href="https://www.facebook.com"><i class="fa-brands fa-facebook"></i></a>
+            <a href="https://www.instagram.com/"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.linkedin.com/"><i class="fa-brands fa-linkedin"></i></a>
+            <a href="https://www.github.com/"><i class="fa-brands fa-github"></i></a>
+          </div>
+          <a href="images/Lanchana's Resume.pdf" downlode class="btn btn2">Downlode cv</a>
+        </div>
+        <div class="contact-right">
+          <form>
+            <input type="text" placeholder="Your Name">
+            <input type="text" placeholder="Your Email">
+            <textarea name="Message"   rows="6" placeholder="Your Message"></textarea>
+            <button class="btn" >Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>Copyright @lanchanaNaik. portfolio by me<i class="fa-solid fa-heart"></i></p>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
