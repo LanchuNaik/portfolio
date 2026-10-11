@@ -1,173 +1,227 @@
-import { useState, useMemo } from 'react'
-import { Box, Typography, Paper, Chip, Stack, Button } from '@mui/material'
-import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded'
-import { motion, AnimatePresence } from 'framer-motion'
-import Section from './Section'
-import TiltCard from './TiltCard'
-import { projects } from '../data/resume'
+import { useRef } from 'react'
+import { Box, useMediaQuery } from '@mui/material'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import NorthEastRoundedIcon from '@mui/icons-material/NorthEastRounded'
+import ProjectVisual from './ProjectVisual'
+import SectionHeading from './ui/SectionHeading'
+import PillButton from './ui/PillButton'
+import FadeIn from './ui/FadeIn'
+import { cardSx, chipSx, containerSx, monoLabelSx, sectionSx } from './ui/layout'
+import { profile, projects } from '../data/resume'
 
-const filters = ['All', 'Professional', 'Personal']
+const pad2 = (n) => String(n).padStart(2, '0')
 
-export default function Projects() {
-  const [filter, setFilter] = useState('All')
-
-  const visible = useMemo(
-    () => (filter === 'All' ? projects : projects.filter((p) => p.type === filter)),
-    [filter],
-  )
-
+function ProjectCard({ project, index, total, stacked }) {
   return (
-    <Section id="projects" eyebrow="Things I've built" title="Featured Projects">
-      {/* filter pills */}
-      <Stack direction="row" spacing={1.5} justifyContent="center" sx={{ mb: 5 }} flexWrap="wrap" useFlexGap>
-        {filters.map((f) => (
-          <Button
-            key={f}
-            onClick={() => setFilter(f)}
-            variant={filter === f ? 'contained' : 'outlined'}
-            size="small"
+    <Box
+      component="article"
+      aria-labelledby={`project-${index}`}
+      sx={{
+        ...cardSx,
+        borderRadius: 'var(--radius-xl)',
+        boxShadow: 'var(--shadow-lg)',
+        overflow: 'hidden',
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 0.92fr) minmax(0, 1.08fr)' },
+        gap: 1.25,
+        p: 1.25,
+        height: stacked ? 'min(600px, calc(100vh - 160px))' : 'auto',
+      }}
+    >
+      <Box sx={{ order: { xs: 2, md: 1 }, p: { xs: 2.25, sm: 3, md: 4 }, display: 'flex', flexDirection: 'column', gap: { xs: 2.25, md: 2.75 }, minHeight: 0 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flexWrap: 'wrap' }}>
+          <Box component="span" sx={{ ...monoLabelSx, color: 'var(--ink)' }}>
+            {pad2(index + 1)}
+            <Box component="span" sx={{ color: 'var(--muted)' }}> / {pad2(total)}</Box>
+          </Box>
+          <Box component="span" sx={{ width: 20, height: '1px', bgcolor: 'var(--line-strong)' }} />
+          <Box component="span" sx={monoLabelSx}>
+            {project.domain}
+          </Box>
+          <Box sx={{ flex: 1 }} />
+          <Box
+            component="span"
             sx={{
-              fontFamily: 'mono',
-              fontSize: 13,
-              ...(filter === f
-                ? { background: 'linear-gradient(100deg,#6e56f7,#35e0d4)' }
-                : { borderColor: 'rgba(255,255,255,0.15)', color: 'text.secondary' }),
+              ...monoLabelSx,
+              fontSize: 10.5,
+              px: 1.25,
+              py: 0.5,
+              borderRadius: 999,
+              bgcolor: project.category === 'Personal' ? 'var(--bg-sunk)' : 'var(--accent-soft)',
+              color: project.category === 'Personal' ? 'var(--ink-2)' : 'var(--accent-ink)',
             }}
           >
-            {f}
-          </Button>
-        ))}
-      </Stack>
+            {project.category} · {project.year}
+          </Box>
+        </Box>
+
+        <Box>
+          <Box
+            component="h3"
+            id={`project-${index}`}
+            sx={{ m: 0, fontSize: 'clamp(2.1rem, 3.8vw, 3.4rem)', fontWeight: 600, letterSpacing: '-0.045em', lineHeight: 1 }}
+          >
+            {project.title}
+          </Box>
+          <Box className="serif" sx={{ mt: 1, fontSize: { xs: 20, md: 23 }, color: 'var(--muted)', lineHeight: 1.25 }}>
+            {project.tagline}
+          </Box>
+        </Box>
+
+        <Box component="ul" sx={{ listStyle: 'none', m: 0, p: 0, display: 'flex', flexDirection: 'column', gap: 1.25 }}>
+          {project.points.map((point) => (
+            <Box
+              component="li"
+              key={point}
+              sx={{
+                position: 'relative',
+                pl: 2.75,
+                fontSize: { xs: 14.5, md: 15 },
+                lineHeight: 1.55,
+                color: 'var(--ink-2)',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  left: 0,
+                  top: '0.55em',
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  border: '2px solid',
+                  borderColor: project.color,
+                },
+              }}
+            >
+              {point}
+            </Box>
+          ))}
+        </Box>
+
+        <Box sx={{ mt: 'auto', display: 'flex', flexDirection: 'column', gap: 2.25 }}>
+          <Box component="ul" aria-label="Tech stack" sx={{ listStyle: 'none', m: 0, p: 0, display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+            {project.tech.map((t) => (
+              <Box component="li" key={t} sx={{ ...chipSx, fontSize: 12 }}>
+                {t}
+              </Box>
+            ))}
+          </Box>
+          {project.link && (
+            <Box
+              component="a"
+              href={project.link}
+              target="_blank"
+              rel="noopener"
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 0.75,
+                width: 'fit-content',
+                fontWeight: 600,
+                fontSize: 15,
+                borderBottom: '1.5px solid var(--ink)',
+                pb: 0.25,
+                transition: 'gap .3s var(--ease-out), color .3s, border-color .3s',
+                '&:hover': { gap: 1.25, color: 'var(--accent-ink)', borderColor: 'var(--accent)' },
+              }}
+            >
+              Visit {project.link.replace(/^https?:\/\//, '')}
+              <NorthEastRoundedIcon sx={{ fontSize: 17 }} />
+            </Box>
+          )}
+        </Box>
+      </Box>
 
       <Box
         sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-          gap: 3,
+          order: { xs: 1, md: 2 },
+          position: 'relative',
+          borderRadius: 'calc(var(--radius-xl) - 10px)',
+          overflow: 'hidden',
+          aspectRatio: { xs: '5 / 4', md: 'auto' },
+          minHeight: { md: 460 },
         }}
       >
-        <AnimatePresence mode="popLayout">
-          {visible.map((project, i) => (
-            <motion.div
-              key={project.title}
-              layout
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.45, delay: (i % 2) * 0.08 }}
-            >
-              <TiltCard>
-                <Paper
-                  elevation={0}
-                  sx={{
-                    p: { xs: 2.75, md: 3.25 },
-                    height: '100%',
-                    borderRadius: 4,
-                    position: 'relative',
-                    overflow: 'hidden',
-                    bgcolor: 'rgba(18,18,28,0.6)',
-                    border: '1px solid rgba(255,255,255,0.07)',
-                    backdropFilter: 'blur(12px)',
-                    transition: 'border-color 0.28s, box-shadow 0.28s',
-                    '&:hover': {
-                      borderColor: 'rgba(110,86,247,0.5)',
-                      boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
-                    },
-                    '&:hover .glow': { opacity: 1 },
-                  }}
-                >
-                  {/* hover glow */}
-                  <Box
-                    className="glow"
-                    sx={{
-                      position: 'absolute',
-                      top: -80,
-                      right: -80,
-                      width: 220,
-                      height: 220,
-                      borderRadius: '50%',
-                      background:
-                        'radial-gradient(circle, rgba(110,86,247,0.4), transparent 70%)',
-                      opacity: 0,
-                      transition: 'opacity 0.3s',
-                      pointerEvents: 'none',
-                    }}
-                  />
-
-                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
-                    <Chip
-                      label={project.type}
-                      size="small"
-                      sx={{
-                        fontFamily: 'mono',
-                        bgcolor:
-                          project.type === 'Professional'
-                            ? 'rgba(110,86,247,0.16)'
-                            : 'rgba(53,224,212,0.12)',
-                        color: project.type === 'Professional' ? '#b3a4ff' : '#6bf0e6',
-                        fontWeight: 600,
-                        fontSize: 11.5,
-                        letterSpacing: 0.3,
-                      }}
-                    />
-                    <Typography sx={{ fontFamily: 'mono', color: 'text.secondary', fontSize: 12.5, fontWeight: 500 }}>
-                      {project.year}
-                    </Typography>
-                  </Stack>
-
-                  <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0.5 }}>
-                    <Typography variant="h6">{project.title}</Typography>
-                    {project.link && (
-                      <Button
-                        href={project.link}
-                        target="_blank"
-                        sx={{ minWidth: 0, p: 0.5, color: 'secondary.main' }}
-                        aria-label={`Visit ${project.title}`}
-                      >
-                        <OpenInNewRoundedIcon sx={{ fontSize: 17 }} />
-                      </Button>
-                    )}
-                  </Stack>
-                  <Typography sx={{ color: 'primary.light', fontSize: 14, fontWeight: 500, mb: 1.5 }}>
-                    {project.tagline}
-                  </Typography>
-
-                  <Stack component="ul" sx={{ m: 0, mb: 2, pl: 2.2 }} spacing={0.75}>
-                    {project.points.map((p, pi) => (
-                      <Typography
-                        key={pi}
-                        component="li"
-                        sx={{ color: 'text.secondary', fontSize: 14, lineHeight: 1.55 }}
-                      >
-                        {p}
-                      </Typography>
-                    ))}
-                  </Stack>
-
-                  <Stack direction="row" flexWrap="wrap" gap={0.75}>
-                    {project.tech.map((t) => (
-                      <Chip
-                        key={t}
-                        label={t}
-                        size="small"
-                        variant="outlined"
-                        sx={{
-                          fontFamily: 'mono',
-                          borderColor: 'rgba(255,255,255,0.12)',
-                          color: 'text.secondary',
-                          fontSize: 11.5,
-                          height: 24,
-                        }}
-                      />
-                    ))}
-                  </Stack>
-                </Paper>
-              </TiltCard>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+        <ProjectVisual project={project} />
       </Box>
-    </Section>
+    </Box>
+  )
+}
+
+// Each card pins to the viewport; earlier cards shrink and dim as later ones
+// slide over them.
+function StackedProject({ project, index, total, progress }) {
+  const remaining = total - 1 - index
+  const scale = useTransform(progress, [index / total, 1], [1, 1 - remaining * 0.045])
+  const dim = useTransform(progress, [index / total, 1], [0, remaining * 0.07])
+
+  return (
+    <Box sx={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center' }}>
+      <Box component={motion.div} style={{ scale, y: index * 16 }} sx={{ position: 'relative', width: '100%', transformOrigin: 'top center' }}>
+        <ProjectCard project={project} index={index} total={total} stacked />
+        <Box
+          component={motion.div}
+          aria-hidden
+          style={{ opacity: dim }}
+          sx={{ position: 'absolute', inset: 0, borderRadius: 'var(--radius-xl)', bgcolor: '#0D1322', pointerEvents: 'none' }}
+        />
+      </Box>
+    </Box>
+  )
+}
+
+export default function Projects() {
+  const stackRef = useRef(null)
+  const stacked = useMediaQuery('(min-width:900px) and (min-height:720px)', { noSsr: true })
+  const { scrollYProgress } = useScroll({ target: stackRef, offset: ['start start', 'end end'] })
+  const total = projects.length
+
+  return (
+    <Box component="section" id="projects" sx={{ ...sectionSx, pb: { xs: 10, md: 14 } }}>
+      <Box sx={containerSx}>
+        <SectionHeading
+          index="04"
+          label="Selected work"
+          title={[
+            "Projects I've",
+            <span key="s" className="serif accent">
+              shipped.
+            </span>,
+          ]}
+        >
+          Production and personal work spanning payments, real-time chat, multi-role dashboards and cross-platform mobile.
+        </SectionHeading>
+
+        <Box ref={stackRef} sx={{ position: 'relative', mt: stacked ? -6 : 0 }}>
+          {stacked ? (
+            projects.map((project, i) => (
+              <StackedProject key={project.title} project={project} index={i} total={total} progress={scrollYProgress} />
+            ))
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2.5, md: 4 } }}>
+              {projects.map((project, i) => (
+                <FadeIn key={project.title}>
+                  <ProjectCard project={project} index={i} total={total} />
+                </FadeIn>
+              ))}
+            </Box>
+          )}
+        </Box>
+
+        <FadeIn>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { sm: 'center' }, justifyContent: 'space-between', gap: 3, mt: { xs: 6, md: 10 }, pt: 4, borderTop: '1px solid var(--line)' }}>
+            <Box sx={{ fontSize: { xs: 18, md: 20 }, color: 'var(--muted)', maxWidth: 520 }}>
+              Curious about the code behind the work? Find me on{' '}
+              <span className="serif" style={{ color: 'var(--ink)', fontSize: '1.15em' }}>
+                GitHub
+              </span>
+              .
+            </Box>
+            <PillButton href={profile.socials.github} target="_blank" rel="noopener" variant="outline" arrow="up-right">
+              Browse GitHub
+            </PillButton>
+          </Box>
+        </FadeIn>
+      </Box>
+    </Box>
   )
 }

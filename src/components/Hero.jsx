@@ -1,351 +1,297 @@
-import { Box, Container, Typography, Button, Stack } from '@mui/material'
-import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded'
-import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded'
-import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded'
-import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded'
-import { motion } from 'framer-motion'
-import { profile, techStack } from '../data/resume'
-import MagneticButton from './MagneticButton'
-import useTypewriter from './useTypewriter'
+import { useRef } from 'react'
+import { Box, Tooltip } from '@mui/material'
+import { motion, useMotionValue, useScroll, useTransform } from 'framer-motion'
+import GitHubIcon from '@mui/icons-material/GitHub'
+import LinkedInIcon from '@mui/icons-material/LinkedIn'
+import MailOutlineRoundedIcon from '@mui/icons-material/MailOutlineRounded'
+import Portrait from './Portrait'
+import RotatingWord from './RotatingWord'
+import RevealLines from './ui/RevealLines'
+import PillButton from './ui/PillButton'
+import Magnetic from './ui/Magnetic'
+import { EASE, containerSx, monoLabelSx } from './ui/layout'
+import { profile } from '../data/resume'
 
-const container = {
+const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } },
+  show: { transition: { staggerChildren: 0.1, delayChildren: 0.55 } },
 }
-const item = {
-  hidden: { opacity: 0, y: 22, filter: 'blur(6px)' },
-  show: {
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
-  },
+const rise = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: EASE } },
 }
 
-const roles = [
-  'React.js Engineer',
-  'React Native Developer',
-  'UI Craftsperson',
-  'Full-Stack Builder',
+const socials = [
+  { label: 'GitHub', href: profile.socials.github, icon: <GitHubIcon sx={{ fontSize: 19 }} /> },
+  { label: 'LinkedIn', href: profile.socials.linkedin, icon: <LinkedInIcon sx={{ fontSize: 19 }} /> },
+  { label: 'Email', href: `mailto:${profile.email}`, icon: <MailOutlineRoundedIcon sx={{ fontSize: 19 }} /> },
 ]
 
-// Per-character reveal for the name
-function RevealName({ text }) {
+function StatusPill() {
   return (
-    <Box component="span" sx={{ display: 'inline-block' }} aria-label={text}>
-      {text.split('').map((char, i) => (
-        <Box
-          key={i}
-          component={motion.span}
-          initial={{ opacity: 0, y: 40, rotateX: -70 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0 }}
-          transition={{
-            delay: 0.35 + i * 0.035,
-            duration: 0.6,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          aria-hidden
-          sx={{
-            display: 'inline-block',
-            transformOrigin: 'bottom',
-            whiteSpace: char === ' ' ? 'pre' : 'normal',
-          }}
-        >
-          {char === ' ' ? ' ' : char}
-        </Box>
-      ))}
+    <Box
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 1.25,
+        pl: 1.25,
+        pr: 1.75,
+        py: 0.75,
+        mb: { xs: 2.5, md: 3 },
+        borderRadius: 999,
+        border: '1px solid var(--line)',
+        bgcolor: 'var(--glass)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+      }}
+    >
+      <Box sx={{ position: 'relative', width: 8, height: 8 }}>
+        <Box sx={{ position: 'absolute', inset: 0, borderRadius: '50%', bgcolor: 'var(--success)', animation: 'pulse-ring 2s var(--ease-out) infinite' }} />
+        <Box sx={{ position: 'absolute', inset: 0, borderRadius: '50%', bgcolor: 'var(--success)' }} />
+      </Box>
+      <Box component="span" sx={{ fontSize: 13.5, fontWeight: 500, color: 'var(--ink-2)' }}>
+        Available for new opportunities
+      </Box>
     </Box>
   )
 }
 
-export default function Hero() {
-  const typed = useTypewriter(roles)
+// Faint vertical rules that echo an editorial layout grid.
+function GridLines() {
+  return (
+    <Box
+      aria-hidden
+      sx={{
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: 'none',
+        maskImage: 'linear-gradient(to bottom, black 30%, transparent 95%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, black 30%, transparent 95%)',
+      }}
+    >
+      <Box sx={{ ...containerSx, height: '100%', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }}>
+        {[0, 1, 2, 3].map((i) => (
+          <Box key={i} sx={{ borderLeft: '1px dashed var(--line)', ...(i === 3 && { borderRight: '1px dashed var(--line)' }) }} />
+        ))}
+      </Box>
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '-10%',
+          right: '-10%',
+          width: '60vw',
+          height: '60vw',
+          maxWidth: 820,
+          maxHeight: 820,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, var(--accent-soft), transparent 65%)',
+          filter: 'blur(10px)',
+        }}
+      />
+    </Box>
+  )
+}
+
+export default function Hero({ ready }) {
+  const ref = useRef(null)
+  const mx = useMotionValue(0)
+  const my = useMotionValue(0)
+
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  const copyY = useTransform(scrollYProgress, [0, 1], [0, -90])
+  const copyOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0.15])
+
+  const handlePointerMove = (e) => {
+    if (e.pointerType !== 'mouse' || !ref.current) return
+    const rect = ref.current.getBoundingClientRect()
+    mx.set(((e.clientX - rect.left) / rect.width - 0.5) * 2)
+    my.set(((e.clientY - rect.top) / rect.height - 0.5) * 2)
+  }
+
+  const play = ready ? 'show' : 'hidden'
 
   return (
     <Box
       component="section"
       id="home"
+      ref={ref}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={() => {
+        mx.set(0)
+        my.set(0)
+      }}
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
         position: 'relative',
-        pt: { xs: 15, md: 12 },
-        pb: 6,
+        minHeight: { md: '100svh' },
+        display: 'flex',
+        alignItems: 'center',
+        pt: { xs: 13, md: 13 },
+        pb: { xs: 12, md: 10 },
       }}
     >
-      <Container maxWidth="md">
-        <Box component={motion.div} variants={container} initial="hidden" animate="show">
-          {/* status pill */}
-          <motion.div variants={item}>
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="center"
-              spacing={1.25}
-              sx={{
-                display: 'inline-flex',
-                px: 2,
-                py: 0.85,
-                mb: 3.5,
-                borderRadius: 999,
-                border: '1px solid rgba(255,255,255,0.1)',
-                bgcolor: 'rgba(255,255,255,0.025)',
-                backdropFilter: 'blur(8px)',
-              }}
+      <GridLines />
+
+      <Box
+        sx={{
+          ...containerSx,
+          position: 'relative',
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.12fr) minmax(0, 0.88fr)' },
+          alignItems: 'center',
+          gap: { xs: 9, md: 6, lg: 10 },
+        }}
+      >
+        <Box component={motion.div} style={{ y: copyY, opacity: copyOpacity }}>
+          <motion.div variants={stagger} initial="hidden" animate={play}>
+            <motion.div variants={rise}>
+              <StatusPill />
+            </motion.div>
+          </motion.div>
+
+          <Box sx={{ ...monoLabelSx, mb: 2, display: 'flex', flexWrap: 'wrap', gap: 1, overflow: 'hidden' }}>
+            <motion.span
+              initial={{ y: '110%' }}
+              animate={ready ? { y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.1, ease: EASE }}
+              style={{ display: 'inline-block' }}
             >
-              <Box sx={{ position: 'relative', display: 'flex' }}>
-                <Box
-                  component={motion.span}
-                  animate={{ scale: [1, 2.2, 1], opacity: [0.7, 0, 0.7] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                  sx={{
-                    position: 'absolute',
-                    inset: 0,
-                    borderRadius: '50%',
-                    bgcolor: 'success.main',
-                  }}
-                />
-                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'success.main' }} />
+              {profile.name}
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                {' '}— {profile.role}
               </Box>
-              <Typography
-                sx={{
-                  fontFamily: 'mono',
-                  fontSize: 12.5,
-                  letterSpacing: 0.5,
-                  color: 'text.secondary',
-                }}
-              >
-                Available for opportunities
-              </Typography>
-            </Stack>
-          </motion.div>
+            </motion.span>
+          </Box>
 
-          {/* location */}
-          <motion.div variants={item}>
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="center"
-              spacing={0.5}
-              sx={{ mb: 2, color: 'text.secondary' }}
-            >
-              <LocationOnRoundedIcon sx={{ fontSize: 17 }} />
-              <Typography sx={{ fontFamily: 'mono', fontSize: 13.5, letterSpacing: 0.4 }}>
-                {profile.location}
-              </Typography>
-            </Stack>
-          </motion.div>
-
-          {/* name */}
-          <Typography
-            variant="h1"
+          <Box
+            component="h1"
             sx={{
-              fontSize: { xs: 44, sm: 64, md: 82 },
-              lineHeight: 1.02,
-              fontWeight: 800,
-              mb: 1.5,
-              perspective: 600,
+              m: 0,
+              fontSize: 'clamp(3.25rem, 6.4vw, 5.6rem)',
+              fontWeight: 600,
+              lineHeight: 0.95,
+              letterSpacing: '-0.045em',
+              '& .serif': { fontSize: '1.08em', letterSpacing: '-0.02em' },
             }}
           >
-            <Box component="span" sx={{ color: 'text.secondary', fontWeight: 500 }}>
-              I'm{' '}
-            </Box>
+            <RevealLines
+              trigger="mount"
+              play={ready}
+              delay={0.15}
+              lines={[
+                'I build',
+                <RotatingWord key="word" words={profile.heroWords} play={ready} />,
+                'web & mobile',
+                <>
+                  apps<Box component="span" className="accent">.</Box>
+                </>,
+              ]}
+            />
+          </Box>
+
+          <motion.div variants={stagger} initial="hidden" animate={play}>
             <Box
-              component="span"
-              sx={{
-                background: 'linear-gradient(100deg,#9d88ff 10%,#35e0d4 90%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
+              component={motion.p}
+              variants={rise}
+              sx={{ m: 0, mt: { xs: 3, md: 3.5 }, maxWidth: 570, fontSize: { xs: 16.5, md: 18 }, lineHeight: 1.65, color: 'var(--muted)' }}
             >
-              <RevealName text="Lanchana" />
+              {profile.intro}
             </Box>
-          </Typography>
 
-          {/* typed role line */}
-          <motion.div variants={item}>
-            <Typography
+            <Box
+              component={motion.div}
+              variants={rise}
               sx={{
-                fontFamily: 'mono',
-                fontSize: { xs: 18, sm: 24, md: 30 },
-                fontWeight: 500,
-                color: 'text.primary',
-                mb: 3.5,
-                minHeight: { xs: 30, md: 44 },
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                gap: 1.5,
+                mt: 4,
+                '& > *, & a': { width: { xs: '100%', sm: 'auto' } },
               }}
             >
-              <Box component="span" sx={{ color: 'secondary.main' }}>{'> '}</Box>
-              {typed}
-              <Box
-                component={motion.span}
-                animate={{ opacity: [1, 0] }}
-                transition={{ duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
-                sx={{
-                  display: 'inline-block',
-                  width: '0.6ch',
-                  ml: '2px',
-                  bgcolor: 'secondary.main',
-                  height: '1.1em',
-                  verticalAlign: 'text-bottom',
-                }}
-              />
-            </Typography>
-          </motion.div>
+              <Magnetic>
+                <PillButton href="#projects" size="lg">
+                  View my work
+                </PillButton>
+              </Magnetic>
+              <Magnetic strength={0.2}>
+                <PillButton href={profile.resumeUrl} target="_blank" rel="noopener" size="lg" variant="outline" arrow="down">
+                  Download résumé
+                </PillButton>
+              </Magnetic>
+            </Box>
 
-          {/* one-line intro */}
-          <motion.div variants={item}>
-            <Typography
-              sx={{
-                color: 'text.secondary',
-                fontSize: { xs: 15.5, md: 17.5 },
-                lineHeight: 1.75,
-                maxWidth: 600,
-                mx: 'auto',
-                mb: 4.5,
-              }}
-            >
-              I build production-grade web &amp; mobile apps with React.js and React
-              Native — from Stripe-powered payments to real-time, multi-role platforms.
-            </Typography>
-          </motion.div>
-
-          {/* buttons */}
-          <motion.div variants={item}>
-            <Stack
-              direction="row"
-              spacing={2}
-              justifyContent="center"
-              alignItems="center"
-              flexWrap="wrap"
-              useFlexGap
-            >
-              <MagneticButton
-                variant="contained"
-                size="large"
-                href="#contact"
-                endIcon={<ArrowForwardRoundedIcon />}
-                sx={{
-                  background: 'linear-gradient(100deg,#6e56f7,#35e0d4)',
-                  boxShadow: '0 12px 34px rgba(110,86,247,0.4)',
-                  fontWeight: 600,
-                  '&:hover': { boxShadow: '0 16px 44px rgba(110,86,247,0.55)' },
-                }}
-              >
-                Let's talk
-              </MagneticButton>
-              <MagneticButton
-                variant="outlined"
-                size="large"
-                href="#projects"
-                strength={0.25}
-                sx={{
-                  borderColor: 'rgba(255,255,255,0.18)',
-                  color: 'text.primary',
-                  '&:hover': { borderColor: 'primary.light', bgcolor: 'rgba(110,86,247,0.06)' },
-                }}
-              >
-                See my work
-              </MagneticButton>
-              <Button
-                variant="text"
-                size="large"
-                href={profile.resumeUrl}
-                target="_blank"
-                startIcon={<DownloadRoundedIcon />}
-                sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' } }}
-              >
-                Resume
-              </Button>
-            </Stack>
+            <Box component={motion.div} variants={rise} sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 4.5 }}>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                {socials.map((s) => (
+                  <Tooltip key={s.label} title={s.label}>
+                    <Box
+                      component="a"
+                      href={s.href}
+                      target={s.href.startsWith('http') ? '_blank' : undefined}
+                      rel="noopener"
+                      aria-label={s.label}
+                      sx={{
+                        width: 42,
+                        height: 42,
+                        display: 'grid',
+                        placeItems: 'center',
+                        borderRadius: '50%',
+                        border: '1px solid var(--line-strong)',
+                        color: 'var(--ink-2)',
+                        transition: 'all .3s var(--ease-out)',
+                        '&:hover': { bgcolor: 'var(--ink)', color: 'var(--bg)', borderColor: 'var(--ink)', transform: 'translateY(-3px)' },
+                      }}
+                    >
+                      {s.icon}
+                    </Box>
+                  </Tooltip>
+                ))}
+              </Box>
+              <Box sx={{ width: 28, height: '1px', bgcolor: 'var(--line-strong)' }} />
+              <Box sx={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.4 }}>
+                Currently at{' '}
+                <Box component="span" sx={{ color: 'var(--ink)', fontWeight: 600 }}>
+                  {profile.company}
+                </Box>
+              </Box>
+            </Box>
           </motion.div>
         </Box>
-      </Container>
 
-      {/* Technologies row */}
-      <Box
-        component={motion.div}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.9 }}
-        sx={{ width: '100%', mt: { xs: 8, md: 11 } }}
-      >
-        <Stack direction="row" alignItems="center" justifyContent="center" spacing={1.5} sx={{ mb: 3 }}>
-          <Box sx={{ width: 32, height: 1, bgcolor: 'rgba(255,255,255,0.12)' }} />
-          <Typography
-            sx={{
-              fontFamily: 'mono',
-              textAlign: 'center',
-              color: 'text.secondary',
-              fontSize: 12.5,
-              letterSpacing: 1.5,
-              textTransform: 'uppercase',
-            }}
-          >
-            Technologies I use
-          </Typography>
-          <Box sx={{ width: 32, height: 1, bgcolor: 'rgba(255,255,255,0.12)' }} />
-        </Stack>
-        <Container maxWidth="lg">
-          <Stack
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            flexWrap="wrap"
-            useFlexGap
-            sx={{ gap: { xs: 1, md: 1.25 } }}
-          >
-            {techStack.map((tech, i) => (
-              <Box
-                key={tech}
-                component={motion.div}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1 + i * 0.03, duration: 0.4 }}
-                whileHover={{ y: -3 }}
-                sx={{
-                  px: 1.75,
-                  py: 0.75,
-                  borderRadius: 999,
-                  fontFamily: 'mono',
-                  fontSize: 13,
-                  fontWeight: 500,
-                  color: 'text.secondary',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  bgcolor: 'rgba(255,255,255,0.02)',
-                  cursor: 'default',
-                  transition: 'color 0.2s, border-color 0.2s, background 0.2s',
-                  '&:hover': {
-                    color: '#fff',
-                    borderColor: 'rgba(110,86,247,0.5)',
-                    background: 'rgba(110,86,247,0.1)',
-                  },
-                }}
-              >
-                {tech}
-              </Box>
-            ))}
-          </Stack>
-        </Container>
+        <Portrait ready={ready} mx={mx} my={my} />
       </Box>
 
       {/* scroll cue */}
       <Box
-        component={motion.div}
+        component={motion.a}
+        href="#about"
+        aria-label="Scroll to About"
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.6 }}
-        sx={{ position: 'absolute', bottom: 22, left: '50%', transform: 'translateX(-50%)' }}
+        animate={ready ? { opacity: 1 } : {}}
+        transition={{ delay: 2 }}
+        sx={{
+          display: { xs: 'none', md: 'flex' },
+          position: 'absolute',
+          left: '50%',
+          bottom: 28,
+          transform: 'translateX(-50%)',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 1.25,
+        }}
       >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <ArrowDownwardRoundedIcon sx={{ color: 'text.secondary', opacity: 0.5, fontSize: 20 }} />
-        </motion.div>
+        <Box component="span" sx={{ ...monoLabelSx, fontSize: 10 }}>
+          Scroll
+        </Box>
+        <Box sx={{ position: 'relative', width: '1px', height: 44, bgcolor: 'var(--line-strong)', overflow: 'hidden' }}>
+          <Box
+            component={motion.span}
+            animate={{ y: ['-100%', '100%'] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            sx={{ position: 'absolute', inset: 0, bgcolor: 'var(--ink)' }}
+          />
+        </Box>
       </Box>
     </Box>
   )

@@ -1,75 +1,94 @@
 // Single source of truth for all portfolio content.
-// Update this file to update the portfolio.
+// Update this file to update the portfolio. Icon fields are string keys that
+// components map to MUI icons, so this file stays free of JSX.
 
 export const profile = {
   name: 'Lanchana Ganesh Naik',
+  firstName: 'Lanchana',
   role: 'Junior Software Engineer',
-  specialty: 'React.js · React Native',
+  specialty: 'React.js & React Native',
+  company: 'DigiTalentio IT Solutions',
   location: 'Bangalore, India',
-  email: 'lanchanagnaik@gmail.com',
+  timeZone: 'Asia/Kolkata',
+  email: 'lanchananaik@gmail.com',
   phone: '+91 80955 12810',
   resumeUrl: '/assets/Lanchana-Ganesh-Naik-Resume.pdf',
-  photo: '/assets/profile-alt.jpg',
+  photo: '/assets/lanchana-portrait.jpg',
   socials: {
-    linkedin: 'https://linkedin.com/in/lanchananaik',
     github: 'https://github.com/LanchuNaik',
+    linkedin: 'https://linkedin.com/in/lanchananaik',
   },
-  summary:
-    'Junior Software Engineer with 1+ year of professional experience building production-grade web and mobile applications using React.js and React Native. Delivered real-world products across fintech, agriculture, and event management domains involving Stripe payment integration, real-time WebSocket communication, and multi-role architectures.',
-  summaryExtra:
-    'Strong proficiency in REST API integration, state management (Redux Toolkit, Zustand), and responsive UI development, with complementary full-stack exposure across Node.js, Express.js, and MongoDB.',
+  // Rotating word in the hero headline: "I build <word> web & mobile apps."
+  heroWords: ['thoughtful', 'scalable', 'real-time', 'secure'],
+  intro:
+    'Junior Software Engineer at DigiTalentio IT Solutions. I turn product requirements into production-ready React.js and React Native apps — from Stripe-powered payments to real-time, multi-role platforms.',
+  about:
+    "I'm a Junior Software Engineer building web and mobile products with React.js, React Native and TypeScript. My day-to-day spans REST API integration, state management, real-time communication and payment workflows — and I've contributed to production apps in fintech, civic-tech, agriculture and event management.",
 }
 
-// Quick headline stats for the hero/about sections
-export const stats = [
-  { value: '1+', label: 'Years Experience' },
-  { value: '6+', label: 'Products Shipped' },
-  { value: '3', label: 'Industry Domains' },
+export const navLinks = [
+  { label: 'About', id: 'about' },
+  { label: 'Skills', id: 'skills' },
+  { label: 'Experience', id: 'experience' },
+  { label: 'Work', id: 'projects' },
+  { label: 'Contact', id: 'contact' },
 ]
 
-// Grouped skills. `level` (0-100) drives the animated progress bars.
+export const stats = [
+  { value: 1, suffix: '+', label: 'Years building production apps' },
+  { value: 5, label: 'Featured projects' },
+  { value: 4, label: 'Industry domains' },
+  { value: 9.91, decimals: 2, label: 'MCA CGPA' },
+]
+
+export const domains = [
+  { label: 'Fintech', icon: 'payments' },
+  { label: 'Civic-tech', icon: 'vote' },
+  { label: 'Agriculture', icon: 'agriculture' },
+  { label: 'Events', icon: 'event' },
+]
+
+// Mirrors the "Technical Skills" block of the résumé.
 export const skillGroups = [
   {
-    category: 'Frontend',
-    skills: [
-      { name: 'React.js', level: 92 },
-      { name: 'React Native', level: 88 },
-      { name: 'TypeScript', level: 82 },
-      { name: 'JavaScript (ES6+)', level: 90 },
-      { name: 'HTML5 & CSS3', level: 90 },
-    ],
+    title: 'Frontend',
+    icon: 'devices',
+    blurb: 'Web and cross-platform mobile interfaces.',
+    skills: ['React.js', 'React Native', 'HTML5', 'CSS3'],
   },
   {
-    category: 'State Management',
-    skills: [
-      { name: 'Redux Toolkit', level: 88 },
-      { name: 'Zustand', level: 82 },
-      { name: 'React Query', level: 80 },
-    ],
+    title: 'Languages',
+    icon: 'code',
+    skills: ['JavaScript (ES6+)', 'TypeScript'],
   },
   {
-    category: 'Backend & Database',
-    skills: [
-      { name: 'Node.js', level: 74 },
-      { name: 'Express.js', level: 72 },
-      { name: 'MongoDB', level: 74 },
-    ],
+    title: 'State Management',
+    icon: 'layers',
+    skills: ['Redux Toolkit', 'Zustand', 'React Query'],
   },
   {
-    category: 'APIs, Integrations & Tools',
-    skills: [
-      { name: 'REST APIs / Axios', level: 90 },
-      { name: 'Stripe Payments', level: 82 },
-      { name: 'Firebase', level: 80 },
-      { name: 'WebSockets (Socket.io)', level: 80 },
-      { name: 'Material UI / Tailwind', level: 86 },
-      { name: 'JWT & OTP Auth', level: 82 },
-      { name: 'Git · Figma · Postman', level: 85 },
-    ],
+    title: 'APIs & Real-Time',
+    icon: 'bolt',
+    skills: ['REST APIs', 'Axios', 'Stripe', 'Firebase', 'WebSockets', 'Socket.io'],
+  },
+  {
+    title: 'Backend & Database',
+    icon: 'storage',
+    skills: ['Node.js', 'Express.js', 'MongoDB'],
+  },
+  {
+    title: 'UI & Authentication',
+    icon: 'palette',
+    skills: ['Material UI', 'Tailwind CSS', 'JWT', 'OTP-based auth'],
+  },
+  {
+    title: 'Tools',
+    icon: 'build',
+    skills: ['Git', 'GitHub', 'GitLab', 'Figma'],
   },
 ]
 
-// Flat marquee list of technologies for the animated tech-stack ribbon
+// Flat list for the animated tech ribbon.
 export const techStack = [
   'React.js',
   'React Native',
@@ -86,136 +105,131 @@ export const techStack = [
   'Socket.io',
   'Material UI',
   'Tailwind CSS',
-  'REST APIs',
-  'JWT',
-  'Git',
+  'JWT · OTP',
   'Figma',
 ]
 
 export const experience = [
   {
-    role: 'Frontend Developer',
+    role: 'Junior Software Engineer',
     company: 'DigiTalentio IT Solutions',
     location: 'Bangalore, India',
-    period: 'May 2025 – Present',
+    period: 'Oct 2025 — Present',
     current: true,
     points: [
-      'Develop and maintain scalable web and mobile applications using React.js and React Native in a production environment.',
-      'Integrate Stripe payment gateway, Firebase services, and REST APIs across multiple client-facing products.',
-      'Implement real-time features (chat, notifications) using WebSockets (Socket.io) in multi-role platforms.',
-      'Build and maintain a shared component library, improving development velocity and UI consistency across projects.',
-      'Collaborate with backend teams and designers (Figma) to deliver end-to-end features on schedule.',
+      'Develop and maintain production web and mobile applications using React.js, React Native, and TypeScript across multiple client projects.',
+      'Integrate Stripe payment workflows and QR-based tipping features for a multi-role fintech platform, including OTP-based user verification.',
+      'Implement real-time chat and notifications using Socket.io and Firebase, supporting communication and updates across application workflows.',
+      'Manage UI state and role-based navigation using Redux Toolkit and Zustand, while developing reusable components for consistent interfaces.',
     ],
+    tech: ['React.js', 'React Native', 'TypeScript', 'Stripe', 'Socket.io', 'Firebase', 'Redux Toolkit', 'Zustand'],
   },
   {
     role: 'Software Development Intern',
     company: 'DigiTalentio IT Solutions',
     location: 'Bangalore, India',
-    period: 'Nov 2024 – Jan 2025',
+    period: 'May 2025 — Oct 2025',
     current: false,
     points: [
-      'Built frontend features using React.js and React Native under senior developer mentorship.',
-      'Implemented authentication flows (JWT, OTP), API integration, and responsive UI screens.',
-      'Contributed to production builds for payment-enabled and real-time applications.',
+      'Implemented application screens and UI features for web and mobile products, translating design requirements into functional components.',
+      'Connected frontend components to REST APIs using Axios and handled API responses to support application workflows.',
+      'Contributed to JWT authentication and OTP verification flows, gaining hands-on experience with application security and frontend integration patterns.',
     ],
-  },
-  {
-    role: 'Frontend Intern',
-    company: 'Gonagoor Technology Solutions Pvt. Ltd.',
-    location: 'Bangalore, India',
-    period: 'Earlier',
-    current: false,
-    points: [
-      'Learned the fundamentals of React Native and mobile app development.',
-      'Designed UI screens and prototypes using Figma.',
-    ],
+    tech: ['React.js', 'React Native', 'Axios', 'REST APIs', 'JWT', 'OTP'],
   },
 ]
 
+// `visual` picks the illustrated mock-up in ProjectVisual.jsx; `color` tints it.
 export const projects = [
   {
     title: 'Tipsy',
-    tagline: 'Multi-Role Tipping & Payment Platform (USA)',
-    type: 'Professional',
+    tagline: 'Multi-role tipping & payment platform',
+    category: 'Professional',
+    domain: 'Fintech · USA',
     year: '2026',
+    color: '#635BFF',
+    visual: 'tipsy',
     tech: ['React.js', 'TypeScript', 'Redux Toolkit', 'Stripe', 'Firebase'],
     points: [
-      'Built dashboards for three distinct user roles (end users, staff, business owners) with role-based routing.',
-      'Integrated Stripe payment gateway and QR-code-based tipping workflows; implemented OTP authentication.',
-      'Managed complex global state with Redux Toolkit, reducing unnecessary re-renders and API calls.',
+      'Developed role-based dashboards for customers, staff, and business owners, with protected routing and role-specific data access.',
+      'Integrated Stripe payment workflows and QR-based tipping, along with OTP authentication.',
+      'Managed application state using Redux Toolkit to support data sharing across dashboard components.',
     ],
   },
   {
     title: 'Celebrity Calendar',
-    tagline: 'Event & Booking Mobile App',
-    type: 'Professional',
+    tagline: 'Event & booking mobile app',
+    category: 'Professional',
+    domain: 'Events',
     year: '2026',
-    tech: ['React Native', 'Redux Toolkit', 'Firebase', 'Axios', 'Figma'],
+    color: '#E11D48',
+    visual: 'calendar',
+    tech: ['React Native', 'Redux Toolkit', 'Firebase', 'Axios'],
     points: [
-      'Developed a cross-platform mobile app for event discovery and ticket booking with calendar-based workflows.',
-      'Integrated Firebase push notifications for real-time booking updates and event reminders.',
+      'Developed cross-platform mobile app features for event discovery, booking, and calendar-based workflows.',
+      'Integrated Firebase Cloud Messaging for booking updates and event reminder notifications.',
       'Implemented role-based navigation for celebrities, managers, and team members.',
     ],
   },
   {
-    title: 'Prajaakeeya',
-    tagline: 'Civic Voting & Engagement Platform',
-    type: 'Professional',
+    title: 'e-Beru',
+    tagline: 'Agricultural multi-role platform',
+    category: 'Professional',
+    domain: 'Agriculture',
     year: '2025',
-    link: 'https://prajaakeeya.org',
-    tech: ['React.js', 'TypeScript', 'Zustand', 'Firebase'],
+    color: '#16A34A',
+    visual: 'eberu',
+    tech: ['React.js', 'Redux Toolkit', 'React Query', 'Socket.io'],
     points: [
-      'Implemented a multi-role voting system (Admin, Candidate, Voter) with candidate registration and issue reporting.',
-      'Added multi-language support and a fully responsive layout for broader accessibility.',
+      'Developed separate dashboards for farmers, consultants, and administrators with role-specific access and data views.',
+      'Implemented real-time chat and notifications using Socket.io to support communication between platform users.',
+      'Used React Query for server-state caching and data fetching to reduce unnecessary API requests.',
     ],
   },
   {
-    title: 'e-BerU',
-    tagline: 'Agricultural Multi-Role Platform',
-    type: 'Professional',
+    title: 'Prajaakeeya',
+    tagline: 'Civic voting & engagement platform',
+    category: 'Professional',
+    domain: 'Civic-tech',
     year: '2025',
-    tech: ['React.js', 'Redux Toolkit', 'React Query', 'Socket.io'],
+    color: '#EA8A0B',
+    visual: 'civic',
+    link: 'https://prajaakeeya.org',
+    tech: ['React.js', 'TypeScript', 'Zustand', 'Firebase'],
     points: [
-      'Developed separate dashboards for farmers, consultants, and administrators with distinct access control.',
-      'Implemented a real-time chat and notification system using WebSockets (Socket.io).',
-      'Optimized data fetching and server-state caching with React Query, reducing load times.',
+      'Developed features for a multi-role civic platform supporting administrators, candidates, and voters, including voting and issue reporting workflows.',
+      'Implemented multilingual support and responsive layouts to improve accessibility across devices and language preferences.',
     ],
   },
   {
     title: 'Rentr',
-    tagline: 'Peer-to-Peer Rental Marketplace (Full-Stack)',
-    type: 'Personal',
+    tagline: 'Peer-to-peer rental marketplace',
+    category: 'Personal',
+    domain: 'Marketplace · Full-stack',
     year: '2026',
+    color: '#0E9F9A',
+    visual: 'rentr',
     tech: ['React Native', 'Node.js', 'Express.js', 'MongoDB', 'Socket.io', 'JWT'],
     points: [
-      'Built a complete full-stack rental platform: booking lifecycle with conflict detection, real-time chat with booking-based access, and a review system.',
-      'Developed RESTful APIs with JWT authentication; implemented geolocation-based search using MongoDB Geo queries.',
-    ],
-  },
-  {
-    title: 'TeamHub',
-    tagline: 'HR Management System',
-    type: 'Personal',
-    year: '2025',
-    tech: ['React.js', 'Node.js', 'MongoDB', 'Redux Toolkit'],
-    points: [
-      'Full-stack HRMS with employee, leave, and payroll management; role-based access control (Admin / HR / Employee).',
-      'Built an admin analytics dashboard with data visualization; designed REST APIs and MongoDB schemas for enterprise workflows.',
+      'Developed a rental marketplace with booking workflows, booking conflict detection, real-time chat, and user reviews.',
+      'Implemented JWT-based authentication, REST API endpoints, and location-based property search using MongoDB geospatial queries.',
     ],
   },
 ]
 
 export const education = [
   {
-    degree: 'Master of Computer Applications (MCA)',
+    degree: 'Master of Computer Applications',
+    short: 'MCA',
     institute: 'Dayananda Sagar College of Engineering, Bangalore',
-    period: '2024 – 2025',
-    detail: 'CGPA: 9.91 / 10',
+    period: '2023 — 2025',
+    detail: 'CGPA 9.91 / 10',
   },
   {
-    degree: 'B.Sc. — Physics, Chemistry & Mathematics (PCM)',
+    degree: 'B.Sc. — Physics, Chemistry & Mathematics',
+    short: 'B.Sc.',
     institute: 'Anjuman College for Women, Bangalore',
-    period: '2019 – 2022',
-    detail: 'Score: 92%',
+    period: '2019 — 2022',
+    detail: 'Score 92%',
   },
 ]
